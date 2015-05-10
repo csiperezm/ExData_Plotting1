@@ -132,7 +132,7 @@ png(filename = "plot4.png",  width = 480, height = 480, units = "px", bg = "whit
 ## Setting the quantity of plots to show
 par(mfrow =c(2,2))
 
-## Using gen_plot3 function above created to generate the plot
+## Using gen_plots functions above created to generate the plots
 with (partial_read,{
     gen_plot2(partial_read,c(pos_day1,pos_day2,pos_day3))
     gen_plot5(partial_read,c(pos_day1,pos_day2,pos_day3))
