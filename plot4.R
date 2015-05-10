@@ -1,5 +1,14 @@
 ## Generating graph for plot 4 for the Course Project 1 in Coursera course Exploratory Data Analysys
 
+## For a best performance is verified if data.table packet is installed in order 
+## to use data.table functions to get the data in a fast way
+useDataTable <- FALSE
+if("data.table" %in% rownames(installed.packages()) == TRUE) useDataTable <- TRUE;
+
+## if data.table is installed, load library
+if (useDataTable)
+	library(data.table)
+
 ########################################
 ## gen_plot2 <- This is the function to use to generate the plot 2 graph
 ## partial_read parameter is the data read to use, pos_days are the locations for the
@@ -106,11 +115,20 @@ col_names <- c("Date","Time","Global_active_power","Global_reactive_power","Volt
 
 
 ## Read the data for the indicated dates "2007/02/01" & "2007/02/02" using a subset in the given .txt file
-partial_read <- subset(read.table("household_power_consumption.txt",colClasses ="character", comment.char ="",
-                                   sep =";", na.strings = "?", col.names = col_names),
-                       as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
-                       | as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
-                       select = col_names)
+## Use the fast function fread if data.table is installed
+if (useDataTable){
+	partial_read <- suppressWarnings(subset(fread("household_power_consumption.txt",colClasses ="character",
+				               sep =";", na.strings = "?"),
+                                       	 as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
+                                       	 | as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
+                                      	 select = col_names))
+} else {
+	partial_read <- subset(read.table("household_power_consumption.txt",colClasses ="character", comment.char ="",
+                                   	   sep =";", na.strings = "?", col.names = col_names),
+                       		as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
+                       		| as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
+                       		select = col_names)
+}
 
 ## Settig the values to locate the x-axis labels indicated ("Thu","Fri","Sat")
 ## First location in the results of the day Thursday (value 4 in format day in %w)
@@ -132,7 +150,7 @@ png(filename = "plot4.png",  width = 480, height = 480, units = "px", bg = "whit
 ## Setting the quantity of plots to show
 par(mfrow =c(2,2))
 
-## Using gen_plots functions above created to generate the plots
+## Using gen_plot3 function above created to generate the plot
 with (partial_read,{
     gen_plot2(partial_read,c(pos_day1,pos_day2,pos_day3))
     gen_plot5(partial_read,c(pos_day1,pos_day2,pos_day3))

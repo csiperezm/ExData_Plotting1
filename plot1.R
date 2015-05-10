@@ -1,5 +1,14 @@
 ## Generating histogram for plot 1 for the Course Project 1 in Coursera course Exploratory Data Analysys
 
+## For a best performance is verified if data.table packet is installed in order 
+## to use data.table functions to get the data in a fast way
+useDataTable <- FALSE
+if("data.table" %in% rownames(installed.packages()) == TRUE) useDataTable <- TRUE;
+
+## if data.table is installed, load library
+if (useDataTable)
+	library(data.table)
+
 ########################################
 ## gen_plot1 <- This is the function to use to generate histogram for plot 1
 ## partial_read parameter is the data read to use
@@ -21,12 +30,20 @@ col_names <- c("Date","Time","Global_active_power","Global_reactive_power","Volt
 
 
 ## Read the data for the indicated dates "2007/02/01" & "2007/02/02" using a subset in the given .txt file
-partial_read <- subset(read.table("household_power_consumption.txt",colClasses ="character", comment.char ="",
-                                   sep =";", na.strings = "?", col.names = col_names),
-                       as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
-                       | as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
-                       select = col_names)
-
+## Use the fast function fread if data.table is installed
+if (useDataTable){
+	partial_read <- suppressWarnings(subset(fread("household_power_consumption.txt",colClasses ="character",
+				               sep =";", na.strings = "?"),
+                                       	as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
+                                       	| as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
+                                       	select = col_names))
+} else {
+	partial_read <- subset(read.table("household_power_consumption.txt",colClasses ="character", comment.char ="",
+                                   	   sep =";", na.strings = "?", col.names = col_names),
+                       		as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/01","%Y/%m/%d") 
+                       		| as.Date(Date,"%d/%m/%Y") == as.Date("2007/02/02","%Y/%m/%d"),  
+                       		select = col_names)
+}
 
 ## Creating file  with the characteristics indicated in assigment t osave the histogram created
 png(filename = "plot1.png",  width = 480, height = 480, units = "px", bg = "white")
