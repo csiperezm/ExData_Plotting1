@@ -1,4 +1,5 @@
 ## Generating graph for plot 4 for the Course Project 1 in Coursera course Exploratory Data Analysys
+## Revised again 06/06/2015
 
 ## For a best performance is verified if data.table packet is installed in order 
 ## to use data.table functions to get the data in a fast way
